@@ -40,5 +40,5 @@ def get_images(user_name):
 
 
 get_images('design.travel.cats')
-get_images('deshudiosh')
+#get_images('deshudiosh')
 
