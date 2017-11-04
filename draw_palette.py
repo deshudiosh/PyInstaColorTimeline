@@ -1,36 +1,60 @@
+import os
 from typing import Sequence
 
+import more_itertools
 from PIL import Image, ImageDraw
 from colorthief import ColorThief
 
 
-def from_three(images: Sequence[str], width: int = 600):
-    '''
-    get three images
-    get dominant color per image
-    merge images into one image
-    add rect per image
-    '''
-    size = int(width / 4)
+def get_rows(username: str, width: int = 600, img_per_row: int = 3, image_samples: int = 3):
+    # TODO: read filenames from json
+    # TODO: sort by date
+    path = "./users/{}/".format(username)
+    img_paths = [path + s for s in os.listdir(path) if str(s).endswith('.jpg')]  # type: Sequence[str]
 
-    thumbnails = []
+    size = int(width / (img_per_row + 1))
+    rows = more_itertools.chunked(img_paths, img_per_row)
+    palettes = []
 
-    for img_str in images:
-        i = Image.open(img_str)  # type: Image.Image
-        i = i.resize((size, size))
-        thumbnails.append(i)
+    for row in rows:
+        out_img = Image.new('RGB', (width, size), color='white')
+        draw = ImageDraw.Draw(out_img)
 
-    out_img = Image.new('RGB', (width, size))
-    out_img.paste(thumbnails[0])
-    out_img.paste(thumbnails[1], box=(size, 0))
-    out_img.paste(thumbnails[2], box=(size*2, 0))
+        i = 0
 
-    draw = ImageDraw.Draw(out_img)
-    draw.rectangle([size*3, 0, size*4, size/3], fill=ColorThief(images[0]).get_color())
-    draw.rectangle([size*3, size/3, size*4, size/1.5], fill=ColorThief(images[1]).get_color())
-    draw.rectangle([size*3, size/1.5, size*4, size], fill=ColorThief(images[2]).get_color())
+        for idx, path in enumerate(row):
+            resized = Image.open(path).resize((size-1, size))
+            out_img.paste(resized, box=(size*idx, 0))
+
+            rect_h = size/image_samples/img_per_row
+
+            for color in ColorThief(path).get_palette(image_samples):
+                sx = size*img_per_row
+                ex = width
+                sy = rect_h*i
+                ey = sy + rect_h
+                draw.rectangle([sx, sy, ex, ey], fill=color)
+                i += 1
+
+        palettes.append(out_img)
+
+    return palettes
+
+def get_whole(username:str, width: int = 600, img_per_row: int = 3, image_samples: int = 3):
+    rows = get_rows(username, width, img_per_row, image_samples)
+    row_height = int(width / (img_per_row + 1))
+    total_height = row_height * len(rows)
+
+    palette = Image.new('RGB', (width, total_height))
+
+    for i, row in enumerate(rows):
+        palette.paste(row, box=(0, row_height*i))
+
+    palette.save('./users/{}.jpg'.format(username))
+    palette.show()
 
 
-    out_img.show()
+
+
 
 

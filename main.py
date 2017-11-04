@@ -1,17 +1,21 @@
+import os
+
 import draw_palette
 import get_images
 
-# get_images.by_username('design.travel.cats')
-# get_images.by_username('deshudiosh')
+
+user = ['design.travel.cats',
+        'deshudiosh',
+        'lofot.love',
+        'tworczywo',
+         'matowe_spojrzenie'][4]
 
 
-draw_palette.from_three(['./users/design.travel.cats/1635766188137953828.jpg',
-                         './users/design.travel.cats/1635679082459734240.jpg',
-                         './users/design.travel.cats/1636339812603496167.jpg'],
-                        width=1000)
+get_images.by_username(user)
 
-# draw_palette.get_rows - list of images (for scrollable ui drawing)
-# draw_palette.get_whole(per_row=3, ommit_modulo=True)
+
+# draw_palette.get_rows('design.travel.cats')
+draw_palette.get_whole(user, 700, 2, 4)
 
 
 
