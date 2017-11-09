@@ -37,6 +37,7 @@ def get_rows(username: str, width: int = 600, img_per_row: int = 3, image_sample
                 i += 1
 
         palettes.append(out_img)
+        # yield out_img
 
     return palettes
 
@@ -51,7 +52,7 @@ def get_whole(username:str, width: int = 600, img_per_row: int = 3, image_sample
         palette.paste(row, box=(0, row_height*i))
 
     palette.save('./users/{}.jpg'.format(username))
-    palette.show()
+    # palette.show()
 
 
 

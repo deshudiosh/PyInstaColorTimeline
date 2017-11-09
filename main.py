@@ -8,15 +8,15 @@ user = ['design.travel.cats',
         'deshudiosh',
         'lofot.love',
         'tworczywo',
-         'matowe_spojrzenie'][4]
+         'matowe_spojrzenie'][0]
 
 
-get_images.by_username(user)
+# get_images.by_username(user)
+# get_images.by_username_external(user)
 
 
 # draw_palette.get_rows('design.travel.cats')
-draw_palette.get_whole(user, 700, 2, 4)
-
+draw_palette.get_whole(user, 600, 2, 4)
 
 
 # def draw_color_for_img(file_name, color):
