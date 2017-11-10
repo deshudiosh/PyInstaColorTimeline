@@ -1,7 +1,7 @@
 import os
 from functools import partial
 from multiprocessing.pool import Pool
-from typing import Sequence
+from pathlib import Path
 
 import more_itertools
 from PIL import Image, ImageDraw
@@ -9,11 +9,9 @@ from colorthief import ColorThief
 
 
 #TODO: use 'center fill' html equivalent
-from pathlib import Path
-
-
 def _resize_fill(img: Image) -> Image:
     pass
+
 
 def _make_row(username: str, width: int, img_per_row: int, image_samples: int, row_items: list):
 
