@@ -64,7 +64,9 @@ def whole_from_rows(username: str):
     path = './users/{}/rows/'.format(username)
     # Path(path).mkdir(exist_ok=True)
 
-    img_paths = sorted([path + s for s in os.listdir(path) if str(s).endswith('.jpg')])
+    img_paths = [s[:-4] for s in os.listdir(path) if str(s).endswith('.jpg')]  # collect
+    img_paths = sorted(img_paths, key=int)  # sort
+    img_paths = [path + s + '.jpg' for s in img_paths]  # 'pathize'
 
     images = list(map(Image.open, img_paths))
     widths, heights = zip(*(i.size for i in images))
