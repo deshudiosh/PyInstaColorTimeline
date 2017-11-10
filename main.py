@@ -15,9 +15,7 @@ def main():
     timing.init()
 
     # get_images.by_username(user)
-
-    # draw_palette.make_rows(user, 1200, 9, 3)
-
+    draw_palette.make_rows(user, 1200, 18, 3)
     draw_palette.whole_from_rows(user)
 
 

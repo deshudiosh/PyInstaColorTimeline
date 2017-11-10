@@ -9,12 +9,16 @@ from colorthief import ColorThief
 
 
 #TODO: use 'center fill' html equivalent
+from pathlib import Path
+
+
 def _resize_fill(img: Image) -> Image:
     pass
 
-def _make_row(username: str, width: int, img_per_row: int, image_samples: int, path: str, size: int, row_items: list):
+def _make_row(username: str, width: int, img_per_row: int, image_samples: int, row_items: list):
 
     row_num = row_items.pop()
+    size = int(width / (img_per_row + 1))
 
     out_img = Image.new('RGB', (width, size), color='white')
     draw = ImageDraw.Draw(out_img)
@@ -22,7 +26,7 @@ def _make_row(username: str, width: int, img_per_row: int, image_samples: int, p
     i = 0
 
     for idx, path in enumerate(row_items):
-        resized = Image.open(path).resize((size - 1, size))
+        resized = Image.open(path).resize((size, size), Image.ANTIALIAS)
         out_img.paste(resized, box=(size * idx, 0))
 
         rect_h = size / image_samples / img_per_row
@@ -35,16 +39,15 @@ def _make_row(username: str, width: int, img_per_row: int, image_samples: int, p
             draw.rectangle([sx, sy, ex, ey], fill=color)
             i += 1
 
-    out_img.save('./users/{}/rows/{}.jpg'.format(username, row_num))
+    path = './users/{}/rows/'.format(username)
+    Path(path).mkdir(exist_ok=True)
+    out_img.save((path + '{}.jpg'.format(row_num)))
     out_img.close()
-
 
 
 def make_rows(username: str, width: int = 600, img_per_row: int = 3, image_samples: int = 3):
     # TODO: read filenames from json
     # TODO: sort by date
-
-    size = int(width / (img_per_row + 1))
 
     path = "./users/{}/".format(username)
     img_paths = [path + s for s in os.listdir(path) if str(s).endswith('.jpg')]
@@ -55,12 +58,14 @@ def make_rows(username: str, width: int = 600, img_per_row: int = 3, image_sampl
         row.append(idx)
 
     pool = Pool()
-    func = partial(_make_row, username, width, img_per_row, image_samples, path, size)
+    func = partial(_make_row, username, width, img_per_row, image_samples)
     pool.map(func, rows)
 
 
 def whole_from_rows(username: str):
     path = './users/{}/rows/'.format(username)
+    # Path(path).mkdir(exist_ok=True)
+
     img_paths = sorted([path + s for s in os.listdir(path) if str(s).endswith('.jpg')])
 
     images = list(map(Image.open, img_paths))
